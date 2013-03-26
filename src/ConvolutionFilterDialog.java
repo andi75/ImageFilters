@@ -6,7 +6,7 @@ import javax.swing.event.*;
 import java.awt.*;
 import java.awt.event.*;
 
-class ConvolutionFilterDialog extends JFrame implements DocumentListener, ItemListener, ActionListener {
+class ConvolutionFilterDialog extends FilterDialog implements DocumentListener, ItemListener, ActionListener {
     ConvolutionFilter filter;
     FilterView view;
 

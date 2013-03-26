@@ -16,14 +16,13 @@ public class FilterView  implements
     ConvolutionFilter convFilter;
     CustomFilter customFilter;
     LinearColorFilter linearColorFilter;
-    Filter filter;
     JButton button;
     JComboBox dropdown;
     Histogram histSrc;
     Histogram histDst;
     HistogramView histSrcView;
     HistogramView histDstView;
-    ConvolutionFilterDialog dialog;
+    FilterDialog dialog;
 
     public static void main(String argv[])
     {
@@ -46,7 +45,6 @@ public class FilterView  implements
         convFilter = new ConvolutionFilter(3);
         customFilter = new CustomFilter();
         linearColorFilter = new LinearColorFilter();
-        filter = convFilter;
 
         String entries[] = { "Convolution-Filter", "Custom-Filter", "LinearColorFilter" };
         dropdown = new JComboBox(entries);
@@ -56,13 +54,13 @@ public class FilterView  implements
         p4.add(dropdown);
 
         button = new JButton();
-        button.setText("Edit Convolution-Filter");
+        button.setText("Edit current Filter");
         button.addActionListener(this);
         // button.setEnabled(false);
         p4.add(button);
         p4.setLayout(new GridLayout(2, 1));
 
-        dst = new ConvertedImage(filter);
+        dst = new ConvertedImage(convFilter);
         dst.addMouseMotionListener(this);
         src.addKeyListener(this);
 
@@ -116,14 +114,11 @@ public class FilterView  implements
         if(ae.getSource() == button)
         {
             // System.out.println("Button has been clicked");
-            if(dialog == null)
+            if(dialog == null && dst != null && dst.filter == convFilter)
                 dialog = new ConvolutionFilterDialog(convFilter, this);
-            else
+            else if(dialog == null && dst != null && dst.filter == linearColorFilter)
             {
-                if(!dialog.isVisible())
-                {
-                    dialog.setVisible(true);
-                }
+                dialog = new LinearFilterDialog(linearColorFilter, this);
             }
         }
         if (ae.getSource() == dropdown)
@@ -136,22 +131,18 @@ public class FilterView  implements
                     break;
                 case 1:
                     dst.filter = customFilter;
-                    if (dialog != null)
-                    {
-                        dialog.setVisible(false);
-                    }
                     button.setEnabled(false);
                     break;
                 case 2:
                     dst.filter = linearColorFilter;
-                    if (dialog != null)
-                    {
-                        dialog.setVisible(false);
-                    }
-                    button.setEnabled(false);
+                    button.setEnabled(true);
                     break;
             }
-
+            if (dialog != null)
+            {
+                dialog.setVisible(false);
+                dialog = null;
+            }
             updateDst();
         }
     }
